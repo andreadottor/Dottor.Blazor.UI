@@ -1,0 +1,39 @@
+﻿@page "/FormSubmitButton"
+
+<h3>FormSubmitButton</h3>
+
+<EditForm Model="this" OnValidSubmit="Save">
+    <DataAnnotationsValidator />
+
+    <div class="form-group">
+        <label for="txtName">Name:</label>
+        <InputTextOnInput class="form-control" @bind-Value="Name" id="txtName" />
+        <ValidationMessage For="() => Name" />
+    </div>
+
+    <div class="form-group mb-2">
+        <label for="txtCode">Code:</label>
+        <InputTextOnInput class="form-control" @bind-Value="Code" id="txtCode" />
+        <ValidationMessage For="() => Code" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+
+    <FormSubmitButton>Save 2</FormSubmitButton>
+</EditForm>
+
+
+@code {
+    [Required]
+    [StringLength(50, MinimumLength = 5)]
+    public string Name { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(10, MinimumLength = 3)]
+    public string Code { get; set; } = string.Empty;
+
+    public void Save()
+    {
+        
+    }
+}

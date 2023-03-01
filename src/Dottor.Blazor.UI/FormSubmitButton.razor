@@ -1,0 +1,48 @@
+@implements IDisposable
+
+<button type="submit" 
+        class="btn btn-primary"
+        disabled="@(!CurrentEditContext.IsModified() || formInvalid)"
+        @attributes="Attributes">
+    @ChildContent
+</button>
+
+
+@code{
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? Attributes { get; set; }
+
+    [CascadingParameter]
+    public EditContext? CurrentEditContext { get; set; }
+
+    private bool formInvalid;
+
+    protected override void OnInitialized()
+    {
+        if (CurrentEditContext is null)
+            throw new InvalidOperationException(
+                   $"{nameof(FormSubmitButton)} requires a cascading " +
+                   $"parameter of type {nameof(EditContext)}. " +
+                   $"For example, you can use {nameof(FormSubmitButton)} " +
+                   $"inside an {nameof(EditForm)}.");
+
+        CurrentEditContext.OnFieldChanged += FieldChanged;
+    }
+
+    private void FieldChanged(object sender, FieldChangedEventArgs e)
+    {
+        formInvalid = !CurrentEditContext.Validate();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        if (CurrentEditContext is not null)
+            CurrentEditContext.OnFieldChanged -= FieldChanged;
+    }
+
+}
