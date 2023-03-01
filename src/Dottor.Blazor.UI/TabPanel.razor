@@ -1,0 +1,27 @@
+
+@if(Active)
+{
+    <div>
+        @ChildContent
+    </div>
+}
+
+@code{
+
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [CascadingParameter]
+    public Tabs? Parent { get; set; }
+
+    public bool Active { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Parent is not null)
+            Parent.AddPanel(this);
+    }
+}

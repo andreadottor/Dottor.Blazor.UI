@@ -1,0 +1,44 @@
+
+<ul class="nav nav-tabs">
+    @foreach (var panel in panels)
+    {
+        <li class="nav-item">
+            <button type="button"
+                    class="nav-link @(panel.Active ? "active" : "")"
+                    aria-current="page"
+                    @onclick="() => SetActive(panel)">
+                @panel.Title
+            </button>
+        </li>
+    }
+</ul>
+
+
+<CascadingValue Value="this">
+    @ChildContent
+</CascadingValue>
+
+@code {
+    private List<TabPanel> panels = new List<TabPanel>();
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+
+    public void AddPanel(TabPanel panel)
+    {
+        if (panels.Count == 0)
+            panel.Active = true;
+
+        panels.Add(panel);
+        StateHasChanged();
+    }
+
+    private void SetActive(TabPanel panel)
+    {
+        foreach (var item in panels)
+        {
+            item.Active = item == panel;
+        }
+    }
+}
