@@ -1,0 +1,33 @@
+﻿@page "/Modal"
+@inject IModalService ModalService
+
+<h3>Modal</h3>
+
+<button class="btn btn-primary" @onclick="ShowModal">Open modal</button>
+
+<Modal Title="Modal title" Id="LoremModal" Backdrop="true">
+    <Body>
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam imperdiet id odio at maximus. Sed interdum at eros id ultrices.
+            Aliquam ultricies mi sapien, sed ultricies augue elementum quis. In pharetra risus leo, mattis commodo quam accumsan et.
+            Ut ac lacus diam. Mauris iaculis ante vel quam malesuada facilisis.
+            Ut quis porttitor augue. Aenean leo felis, posuere quis scelerisque sed, efficitur sit amet tellus.
+            Fusce sodales, ex at dignissim laoreet, augue nulla pulvinar leo, eget posuere orci ipsum non magna.
+            In ex mauris, pulvinar suscipit ligula ac, tincidunt tristique mauris. Vivamus vel libero feugiat dolor porta tempor ac ut felis.
+            Aliquam facilisis ullamcorper odio nec tristique. In eget sollicitudin felis, eu egestas dui. Integer ut feugiat mauris.
+            Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+            Vivamus nec sem quis felis blandit dignissim.
+        </p>
+    </Body>
+    <Footer>
+        footer text
+    </Footer>
+</Modal>
+
+@code {
+
+    private async Task ShowModal()
+    {
+        await ModalService.ShowAsync("LoremModal");
+    }
+}

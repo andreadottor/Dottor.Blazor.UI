@@ -10,4 +10,8 @@
     <ProjectReference Include="..\..\src\Dottor.Blazor.UI\Dottor.Blazor.UI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\libs\" />
+  </ItemGroup>
+
 </Project>

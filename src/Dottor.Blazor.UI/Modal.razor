@@ -1,0 +1,127 @@
+@implements IAsyncDisposable
+
+@inject IModalService ModalService
+@inject IJSRuntime JS
+
+<div @ref="_modalElement" class="modal fade" data-bs-focus="false" data-bs-backdrop="@(Backdrop ? "true" : "false")" aria-labelledby="@_titleId" aria-hidden="true">
+    <div class="modal-dialog @(Scrollable ? "modal-dialog-scrollable" : null) @(Centered ? "modal-dialog-centered" : null) @ModalSizeClass">
+        <div class="modal-content">
+            @if (ShowHeader)
+            {
+                <div class="modal-header">
+                    <h5 class="modal-title" id="@_titleId">@Title</h5>
+                    @if (ShowDismissButton)
+                    {
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    }
+                </div>
+            }
+            <div class="modal-body" style="@(BodyHeight.HasValue ? $"height:{BodyHeight.Value}px" : null)">
+                @Body
+            </div>
+            @if (ShowFooter)
+            {
+                <div class="modal-footer">
+                    @Footer
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+
+
+    [Parameter] public string Id { get; set; } = string.Empty;
+    [Parameter] public string Title { get; set; } = string.Empty;
+    [Parameter] public bool ShowHeader { get; set; } = true;
+    [Parameter] public bool ShowFooter { get; set; } = true;
+    [Parameter] public bool ShowDismissButton { get; set; } = true;
+    [Parameter] public bool Centered { get; set; } = false;
+    [Parameter] public bool Scrollable { get; set; } = false;
+    [Parameter] public int? BodyHeight { get; set; } = null;
+    [Parameter] public bool Backdrop { get; set; } = false;
+    [Parameter] public ModalSize Size { get; set; } = ModalSize.Default;
+    [Parameter] public RenderFragment? Body { get; set; }
+    [Parameter] public RenderFragment? Footer { get; set; }
+
+    private Guid _titleId = Guid.NewGuid();
+
+    private ElementReference _modalElement;
+    private IJSObjectReference? _module;
+    private IJSObjectReference? _modalInstance;
+
+    private string? ModalSizeClass
+    {
+        get
+        {
+            switch (Size)
+            {
+                case ModalSize.Default:
+                    return null;
+                case ModalSize.Small:
+                    return "modal-sm";
+                case ModalSize.Large:
+                    return "modal-lg";
+                case ModalSize.ExtraLarge:
+                    return "modal-xl";
+            }
+            return null;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        ModalService.OnShowCommand += ShowCommand;
+        ModalService.OnHideCommand += HideCommand;
+    }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _module = await JS.ImportModuleAsync("./_content/Dottor.Blazor.UI/Modal.razor.js");
+            _modalInstance = await _module.InvokeAsync<IJSObjectReference>("init", _modalElement);
+        }
+    }
+
+    private void ShowCommand(object? sender, ModalShowEventArgs e)
+    {
+        if (!string.IsNullOrWhiteSpace(Id) && string.Compare(e.ModalId, this.Id, true) == 0)
+        {
+            InvokeAsync(StateHasChanged);
+            _module?.InvokeVoidAsync("show", _modalInstance).ConfigureAwait(false).GetAwaiter().GetResult();
+        }
+    }
+
+    private void HideCommand(object? sender, ModalHideEventArgs e)
+    {
+        if (!string.IsNullOrWhiteSpace(Id) && string.Compare(e.ModalId, this.Id, true) == 0)
+        {
+            InvokeAsync(StateHasChanged);
+            _module?.InvokeVoidAsync("hide", _modalInstance).ConfigureAwait(false).GetAwaiter().GetResult();
+        }
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        ModalService.OnShowCommand -= ShowCommand;
+        ModalService.OnHideCommand -= HideCommand;
+
+        try
+        {
+            if (_modalInstance is not null)
+                await _modalInstance.DisposeAsync();
+
+            if (_module is not null)
+                await _module.DisposeAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+            // do nothing.
+            // Can occour only in Blazor Server
+        }
+    }
+
+}

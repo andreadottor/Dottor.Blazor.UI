@@ -1,0 +1,25 @@
+﻿@page "/MessageBox"
+@inject IMessageBoxService MessageBoxService
+
+<h3>MessageBox</h3>
+
+<button class="btn btn-primary" @onclick="ShowAlert">Show alert</button>
+
+<button class="btn btn-primary" @onclick="ShowConfirm">Show confirm</button>
+
+
+@code {
+
+    private async Task ShowAlert()
+    {
+        await MessageBoxService.ShowAlertAsync("Alert title", "Alert text");
+    }
+
+    private async Task ShowConfirm()
+    {
+        var result = await MessageBoxService.ShowConfirmAsync("Confirm title", "Are you sure of...?");
+
+        await MessageBoxService.ShowAlertAsync("Confirm result", $"The confirm result is: '{result}'.");
+    }
+
+}
