@@ -1,10 +1,7 @@
 
-@if(Active)
-{
-    <div>
-        @ChildContent
-    </div>
-}
+<div style="display:@(Active ? "block" : "none");">
+    @ChildContent
+</div>
 
 @code{
 
