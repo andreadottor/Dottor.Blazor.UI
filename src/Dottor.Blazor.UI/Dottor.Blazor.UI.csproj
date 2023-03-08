@@ -8,6 +8,16 @@
     <VersionSuffix>alpha</VersionSuffix>
     <Company>Andrea Dottor</Company>
     <Authors>Andrea Dottor</Authors>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Dottor.Blazor.UI</Title>
+    <Product>Dottor.Blazor.UI</Product>
+    <Description>Blazor UI components library.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/andreadottor/Dottor.Blazor.UI</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>blazor dotnet aspnet</PackageTags>
+    <PackageReleaseNotes>See https://github.com/andreadottor/Dottor.Blazor.UI/blob/main/CHANGELOG.md for details.</PackageReleaseNotes>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
 
@@ -20,6 +30,10 @@
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
